@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Firebase Phone authentication</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet"
+    href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+  <style>
+    .btn.btn-primary.btn-raised {
+      background-color: #3f51b5;
+
+    }
+
+    .btn-primary {
+      background-color: #3f51b5;
+    }
+  </style>
+</head>
+
+
+<body>
+  <!-- Image and text -->
+  <nav class="navbar navbar-dark btn-primary">
+    <a class="navbar-brand" href="#">
+      <!-- <img src="https://www.gstatic.com/devrel-devsite/prod/v85e39fe21f53c758adf6c791fb94a7a2182cff2705b3dc8ed7c59fc745471159/firebase/images/lockup.png" width="170" height="50" class="d-inline-block align-top" alt=""> -->
+      TECHMATION MYANMR
+    </a>
+  </nav>
+
+  <div class="container mt-4">
+    <strong class="mt-4">USING FIREBASE AUTH SERVICES</strong> <br>
+    SERICE NAME : <code>PHONE AUTHENTICATION</code> <br>
+    USER MANAG : <code>Manage Users in Firebase</code>
+    <div id="ph_num" class="mt-4">
+      <form>
+        <div class="form-group ">
+          <label for="exampleInputEmail1" class="bmd-label-floating">Enter A phone number (+95)</label>
+          <input class="form-control" id="code" type="text">
+        </div>
+        <div id="recaptcha-container" class="mt-4"></div>
+        <button type="button" class="btn btn-raised btn-primary btn-lg btn-block mb-2 mt-3" onclick="data()">Send
+          OTP</button>
+
+      </form>
+    </div>
+    <hr>
+    <div id="otp" class="mt-4">
+      <form>
+        <div class="form-group ">
+          <label for="exampleInputEmail1" class="bmd-label-floating">Enter six digits code (000000)</label>
+          <input class="form-control" id="verify" type="text">
+        </div>
+        <button type="button" class="btn btn-raised btn-primary btn-lg btn-block mb-2"
+          onclick="verifycode()">verify</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!--  //--------------------------------------------------------------------------------------// -->
+  <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.22.0/firebase-firestore.js"></script>
+  <!-- //-----------------------------------------------------------------------------------------// -->
+
+
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyAmAkRYYy8ymFzuRuz04poXw35g3GtcCoE",
+      authDomain: "phone-authentication-324d5.firebaseapp.com",
+      databaseURL: "https://phone-authentication-324d5.firebaseio.com",
+      projectId: "phone-authentication-324d5",
+      storageBucket: "phone-authentication-324d5.appspot.com",
+      messagingSenderId: "567871039720",
+      appId: "1:567871039720:web:bcfdc5352c4ac3ea3dc15d",
+      measurementId: "G-2MHZ2QNKF6"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+    //firebase.auth().settings.appVerificationDisabledForTesting = true; //   
+    // var phoneNumber = "+9509257812680";
+    // var testVerificationCode = "123456";
+    //var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+    var _code = 0;
+    var code = document.getElementById("code");
+    var div_ph_num = document.getElementById("ph_num");
+    var _verifyID = document.getElementById("verify")
+    var div_otp = document.getElementById("otp");
+    var div_ph_num_class = document.createAttribute("class");
+    div_ph_num_class.value = "invisible";
+    var div_otp_class = document.createAttribute("class");
+    div_otp_class.value = "visible";
+    var verifyID;
+
+    //----- this recaptchaverifier is optional------------------//
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+    var appVerifier = window.recaptchaVerifier;
+    //------------optional features---------------------------------//
+
+    // prerender section for recaptchaverifier
+    recaptchaVerifier.render().then(function (widgetId) {
+      window.recaptchaWidgetId = widgetId;
+    });
+
+
+    function data() {
+      firebase.auth().signInWithPhoneNumber(code.value, appVerifier)
+        .then(function (confirmationResult) {
+          console.log("SMS CODE IS SENT");
+          verifyID = confirmationResult.verificationId;
+          // div_ph_num.setAttributeNode(div_ph_num_class);
+          // div_otp.setAttributeNode(div_otp_class);
+        }).catch(function (error) {
+          console.log(error);
+          alert("TRY AGAIN");
+        });
+    }
+
+    function verifycode() {
+      const _otp_code = _verifyID.value;
+      var credential = firebase.auth.PhoneAuthProvider.credential(verifyID, _otp_code);
+      firebase.auth().signInWithCredential(credential).then(function () {
+        console.log("SUCCESSIFULY");
+        window.location.assign("./prorile.html");
+      }).catch(function (error) {
+        alert("YOUR CODE IS BLANK");
+      });
+
+    }
+
+
+
+  </script>
+</body>
+
+<!-- //-------------------------------------------------------------------------------------------------------// -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js"
+    integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js"
+    integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9"
+    crossorigin="anonymous"></script>
+  <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
+
+</html>
