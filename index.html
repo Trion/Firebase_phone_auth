@@ -131,7 +131,7 @@
       var credential = firebase.auth.PhoneAuthProvider.credential(verifyID, _otp_code);
       firebase.auth().signInWithCredential(credential).then(function () {
         console.log("SUCCESSIFULY");
-        window.location.assign("./prorile.html");
+        window.location.assign("./profile.html");
       }).catch(function (error) {
         alert("YOUR CODE IS BLANK");
       });
